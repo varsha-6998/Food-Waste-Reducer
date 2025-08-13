@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NoWaste - Fight Food Waste</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background-color: #f9f9f9;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 5%;
+        background-color: #4CAF50;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .nav-links a:hover {
+        background-color: #3e8e41;
+    }
+
+    .btn {
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s;
+    }
+
+    .btn-login {
+        background-color: transparent;
+        border: 2px solid white;
+        color: white;
+    }
+
+    .btn-signup {
+        background-color: white;
+        color: #4CAF50;
+    }
+
+    .btn-donate {
+        background-color: #FF5722;
+        color: white;
+    }
+
+    .hero {
+        text-align: center;
+        padding: 5rem 2rem;
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+    }
+
+    .cta-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .features {
+        padding: 4rem 5%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .feature-card h3 {
+        margin: 1rem 0;
+        color: #4CAF50;
+    }
+
+    /* Food cards section */
+    .in-need-section {
+        padding: 4rem 5%;
+    }
+
+    .donate-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .food-card {
+        display: flex;
+        gap: 1rem;
+        background: #f1f1f1;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        align-items: center;
+    }
+
+    .food-card img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .food-card-content h3 {
+        margin-bottom: 0.5rem;
+        color: #4CAF50;
+    }
+
+    .food-card-content p {
+        margin-bottom: 0.3rem;
+    }
+
+    .btn-claim {
+        margin-left: auto;
+        background-color: #FF5722;
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-claim:hover {
+        background-color: #e64a19;
+    }
+
+    footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .nav-links {
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .hero h1 {
+            font-size: 2rem;
+        }
+        .food-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .btn-claim {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+    }
+</style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="logo">NoWaste</a>
+        <div class="nav-links">
+            <a href="#" class="btn btn-login">Login</a>
+            <a href="#" class="btn btn-signup">Sign Up</a>
+            <a href="donate.html" class="btn btn-donate">Donate</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Fight Food Waste, Feed Communities</h1>
+        <p>NoWaste connects surplus food from businesses and individuals with people who need it most, reducing waste and hunger in your community.</p>
+        <a href="donate.html" class="cta-btn">Join the Movement</a>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Reduce Waste</h3>
+            <p>Help businesses and individuals redirect surplus food instead of throwing it away.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Feed People</h3>
+            <p>Connect nutritious food with community organizations and people in need.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Save Money</h3>
+            <p>Businesses reduce disposal costs while receiving tax benefits for donations.</p>
+        </div>
+    </section>
+
+    <!-- Food donations section -->
+    <section class="in-need-section" id="inNeedSection" style="display:none;">
+        <div class="donate-container">
+            <h2>Food Available For Those In Need</h2>
+            <div class="food-cards" id="foodCardsContainer">
+                <!-- Food cards will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 NoWaste. All rights reserved.</p>
+    </footer>
+
+<script>
+    // Fetch donations from backend and display on home page
+    async function fetchDonations() {
+        const container = document.getElementById('foodCardsContainer');
+        container.innerHTML = 'Loading...';
+
+        try {
+            const response = await fetch('http://localhost:5000/api/foodPosted');
+            if (!response.ok) throw new Error('Failed to fetch donations');
+
+            const foodItems = await response.json();
+
+            if (foodItems.length === 0) {
+                container.innerHTML = '<p>No food donations available at the moment.</p>';
+                document.getElementById('inNeedSection').style.display = 'none';
+                return;
+            }
+
+            container.innerHTML = '';
+            foodItems.forEach(item => {
+                container.innerHTML += `
+                    <div class="food-card" data-id="${item.id}">
+                        <img src="${item.image}" alt="${item.type}">
+                        <div class="food-card-content">
+                            <h3>${item.type}</h3>
+                            <p>${item.description}</p>
+                            <p class="quantity">Quantity: ${item.quantity}</p>
+                            <p class="expiry">Use by: ${new Date(item.useBy).toLocaleDateString()}</p>
+                            <p class="address">${item.address}</p>
+                            <p class="contact">Contact: ${item.contact}</p>
+                        </div>
+                        <button class="btn-claim" onclick="claimFood('${item.id}')">Claim</button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('inNeedSection').style.display = 'block';
+        } catch (error) {
+            container.innerHTML = '<p>Failed to load donations.</p>';
+            console.error(error);
+        }
+    }
+
+    async function claimFood(foodId) {
+        if (!confirm('Are you sure you want to claim this food?')) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/foodPosted/claim/${foodId}`, { method: 'POST' });
+            if (response.ok) {
+                alert('Food claimed successfully!');
+                fetchDonations();
+            } else {
+                const resData = await response.json();
+                alert('Error: ' + (resData.message || 'Failed to claim food.'));
+            }
+        } catch (error) {
+            alert('Error connecting to server.');
+            console.error(error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchDonations);
+</script>
+</body>
+</html>

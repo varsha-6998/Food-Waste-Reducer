@@ -18,7 +18,6 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # ---------------------------
 ngo_col.create_index([("location", "2dsphere")])
 
-
 # ---------------------------
 # API endpoints
 # ---------------------------
@@ -117,9 +116,9 @@ def register_ngo():
 # ---------------------------
 # Helper functions
 # ---------------------------
-def find_next_ngos(donation, batch=3, radius_m=10000):
-    lng, lat = donation["location"]["coordinates"]
-    exclude = set(donation.get("notified_ngo_ids", []))
+def find_next_ngos(food_item, batch=3, radius_m=10000):
+    lng, lat = food_item["location"]["coordinates"]
+    exclude = set(food_item.get("notified_ngo_ids", []))
     query = {
         "active": True,
         "location": {
@@ -138,47 +137,41 @@ def find_next_ngos(donation, batch=3, radius_m=10000):
                 break
     return out
 
-def notify_batch(donation, ngos):
+def notify_batch(food_item, ngos):
     ids = [str(n["_id"]) for n in ngos]
-    donation_col.update_one(
-        {"_id": donation["_id"], "status": "pending"},
+    foodPosted.update_one(
+        {"_id": food_item["_id"], "claimed": False},
         {"$addToSet": {"notified_ngo_ids": {"$each": ids}},
          "$inc": {"round": 1},
          "$set": {"updated_at": datetime.utcnow()}}
     )
     payload = {
         "type": "donation_available",
-        "donation_id": str(donation["_id"]),
-        "food": donation["food"],
-        "donor_name": donation["donor_name"],
-        "approx_area": donation["address"],
-        "round": donation.get("round", 0) + 1,
+        "food_id": str(food_item["_id"]),
+        "food": food_item["type"],
+        "donor_name": food_item.get("donor_name", "Anonymous"),
+        "approx_area": food_item["address"],
+        "round": food_item.get("round", 0) + 1,
     }
     for n in ngos:
         room = f"ngo:{str(n['_id'])}"
         socketio.emit("notify_donation", payload, room=room)
 
-def notify_next_batches(donation_id):
+def notify_next_batches(food_id):
     interval = 300  # 5 minutes
     while True:
-        d = donation_col.find_one({"_id": ObjectId(donation_id)})
-        if not d or d["status"] != "pending":
+        f = foodPosted.find_one({"_id": ObjectId(food_id)})
+        if not f or f.get("claimed", False):
             return
-        if d.get("expires_at") and datetime.utcnow() > d["expires_at"]:
-            donation_col.update_one(
-                {"_id": d["_id"]},
-                {"$set": {"status": "cancelled", "updated_at": datetime.utcnow()}}
-            )
-            return
-        ngos = find_next_ngos(d)
+        ngos = find_next_ngos(f)
         if ngos:
-            notify_batch(d, ngos)
+            notify_batch(f, ngos)
         slept = 0
         while slept < interval:
             time.sleep(5)
             slept += 5
-            cur = donation_col.find_one({"_id": d["_id"]})
-            if cur["status"] != "pending":
+            cur = foodPosted.find_one({"_id": f["_id"]})
+            if cur.get("claimed", False):
                 return
 
 # ---------------------------
@@ -195,35 +188,35 @@ def register_socket(data):
 @socketio.on("accept_donation")
 def accept_donation(data):
     ngo_id = data["ngo_id"]
-    donation_id = data["donation_id"]
+    food_id = data["food_id"]
 
-    res = donation_col.update_one(
-        {"_id": ObjectId(donation_id), "status": "pending"},
-        {"$set": {"status": "assigned", "accepted_by": ngo_id, "updated_at": datetime.utcnow()}}
+    res = foodPosted.update_one(
+        {"_id": ObjectId(food_id), "claimed": False},
+        {"$set": {"claimed": True, "accepted_by": ngo_id, "updated_at": datetime.utcnow()}}
     )
     if res.modified_count == 0:
-        emit("accept_result", {"ok": False, "reason": "Already assigned"})
+        emit("accept_result", {"ok": False, "reason": "Already claimed"})
         return
 
-    d = donation_col.find_one({"_id": ObjectId(donation_id)})
+    f = foodPosted.find_one({"_id": ObjectId(food_id)})
 
     socketio.emit(
         "donation_assigned",
         {
-            "donation_id": donation_id,
-            "address": d["address"],
-            "lat": d["location"]["coordinates"][1],
-            "lng": d["location"]["coordinates"][0],
-            "food": d["food"],
-            "donor_name": d["donor_name"],
+            "food_id": food_id,
+            "address": f["address"],
+            "lat": f["location"]["coordinates"][1],
+            "lng": f["location"]["coordinates"][0],
+            "food": f["type"],
+            "donor_name": f.get("donor_name", "Anonymous"),
         },
         room=f"ngo:{ngo_id}",
     )
 
-    for other in d.get("notified_ngo_ids", []):
+    for other in f.get("notified_ngo_ids", []):
         if other != ngo_id:
             socketio.emit(
-                "donation_cleared", {"donation_id": donation_id, "status": "assigned"}, room=f"ngo:{other}"
+                "donation_cleared", {"food_id": food_id, "status": "assigned"}, room=f"ngo:{other}"
             )
     emit("accept_result", {"ok": True})
 

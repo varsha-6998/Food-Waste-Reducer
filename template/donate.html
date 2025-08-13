@@ -145,43 +145,6 @@
             padding: 1.5rem;
         }
     }
-    /* Food cards styles */
-    .food-card {
-        display: flex;
-        gap: 1rem;
-        background: #f1f1f1;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        align-items: center;
-    }
-    .food-card img {
-        width: 120px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 8px;
-    }
-    .food-card-content h3 {
-        margin-bottom: 0.5rem;
-        color: #4CAF50;
-    }
-    .food-card-content p {
-        margin-bottom: 0.3rem;
-    }
-    .btn-claim {
-        margin-left: auto;
-        background-color: #FF5722;
-        border: none;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    .btn-claim:hover {
-        background-color: #e64a19;
-    }
 </style>
 </head>
 <body>
@@ -209,26 +172,17 @@
 
         <div class="form-group">
             <label for="foodType">Food Type</label>
-            <input
-                type="text"
-                id="foodType"
-                placeholder="e.g., Fresh vegetables, Packaged meals, Bakery items"
-                required
-            />
+            <input type="text" id="foodType" placeholder="e.g., Fresh vegetables, Packaged meals" required />
         </div>
 
         <div class="form-group">
             <label for="foodDescription">Description</label>
-            <textarea
-                id="foodDescription"
-                placeholder="Describe the food items, any special preparation, dietary information, etc."
-                required
-            ></textarea>
+            <textarea id="foodDescription" placeholder="Describe the food items" required></textarea>
         </div>
 
         <div class="form-group">
             <label for="quantity">Quantity</label>
-            <input type="text" id="quantity" placeholder="e.g., 5 kg, 10 servings, 3 boxes" required />
+            <input type="text" id="quantity" placeholder="e.g., 5 kg, 10 servings" required />
         </div>
 
         <div class="form-group">
@@ -238,11 +192,7 @@
 
         <div class="form-group">
             <label for="address">Collection Address</label>
-            <textarea
-                id="address"
-                placeholder="Enter full address where the food can be collected"
-                required
-            ></textarea>
+            <textarea id="address" placeholder="Enter full address" required></textarea>
         </div>
 
         <div class="form-group">
@@ -253,15 +203,6 @@
         <button type="submit" class="btn btn-submit">Post Donation</button>
     </form>
 </div>
-
-<section class="in-need-section" id="inNeedSection" style="display: none;">
-    <div class="donate-container">
-        <h2>Food Available For Those In Need</h2>
-        <div class="food-cards" id="foodCardsContainer">
-            <!-- Food cards inserted by JS -->
-        </div>
-    </div>
-</section>
 
 <footer>
     <p>&copy; 2023 NoWaste. All rights reserved.</p>
@@ -282,7 +223,7 @@
         }
     });
 
-    // Form submit handler with backend POST
+    // Form submit handler
     document.getElementById('donateForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
@@ -316,18 +257,14 @@
         try {
             const response = await fetch('http://localhost:5000/api/foodPosted', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(foodItem),
             });
 
             if (response.ok) {
-                alert('Thank you for your donation! Your food is now listed for those in need.');
+                alert('Thank you for your donation! Your food is now listed.');
                 this.reset();
                 document.getElementById('imagePreview').style.display = 'none';
-                await updateInNeedSection();
-                document.getElementById('inNeedSection').style.display = 'block';
             } else {
                 const resData = await response.json();
                 alert('Error: ' + (resData.message || 'Failed to save donation.'));
@@ -337,79 +274,6 @@
             console.error(error);
         }
     });
-
-    // Create a food card HTML with Claim button
-    function createFoodCard(foodItem) {
-        return `
-            <div class="food-card" data-id="${foodItem.id || ''}">
-                <img src="${foodItem.image || ''}" alt="${foodItem.type || 'Food Image'}" />
-                <div class="food-card-content">
-                    <h3>${foodItem.type || ''}</h3>
-                    <p>${foodItem.description || ''}</p>
-                    <p class="quantity">Quantity: ${foodItem.quantity || ''}</p>
-                    <p class="expiry">Use by: ${
-                        foodItem.useBy ? new Date(foodItem.useBy).toLocaleDateString() : ''
-                    }</p>
-                    <p class="address">${foodItem.address || ''}</p>
-                    <p class="contact">Contact: ${foodItem.contact || ''}</p>
-                </div>
-                <button class="btn-claim" onclick="claimFood('${foodItem.id}')">Claim</button>
-            </div>
-        `;
-    }
-
-    // Fetch and update the donation list from backend
-    async function updateInNeedSection() {
-        const container = document.getElementById('foodCardsContainer');
-        container.innerHTML = '';
-
-        try {
-            const response = await fetch('http://localhost:5000/api/foodPosted');
-            if (!response.ok) throw new Error('Failed to fetch donations');
-
-            const foodItems = await response.json();
-
-            if (foodItems.length === 0) {
-                container.innerHTML = '<p>No food donations available at the moment.</p>';
-                document.getElementById('inNeedSection').style.display = 'none';
-                return;
-            }
-
-            foodItems.forEach((item) => {
-                container.innerHTML += createFoodCard(item);
-            });
-
-            document.getElementById('inNeedSection').style.display = 'block';
-        } catch (error) {
-            container.innerHTML = '<p>Failed to load donations.</p>';
-            console.error(error);
-        }
-    }
-
-    // Claim a food post by id
-    async function claimFood(foodId) {
-        if (!confirm('Are you sure you want to claim this food?')) return;
-
-        try {
-            const response = await fetch(`http://localhost:5000/api/foodPosted/claim/${foodId}`, {
-                method: 'POST',
-            });
-
-            if (response.ok) {
-                alert('Food claimed successfully!');
-                await updateInNeedSection();
-            } else {
-                const resData = await response.json();
-                alert('Error: ' + (resData.message || 'Failed to claim food.'));
-            }
-        } catch (error) {
-            alert('Error connecting to server.');
-            console.error(error);
-        }
-    }
-
-    // Load donations on page load
-    document.addEventListener('DOMContentLoaded', updateInNeedSection);
 </script>
 </body>
 </html>

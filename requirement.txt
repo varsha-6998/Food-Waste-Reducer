@@ -1,1 +1,1 @@
-pip install flask pymongo flask-cors
+ flask pymongo flask-cors

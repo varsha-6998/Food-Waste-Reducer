@@ -3,9 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>NoWaste - Fight Food Waste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: #4CAF50;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: #3e8e41;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-signup {
+            background-color: white;
+            color: #4CAF50;
+        }
+
+        .btn-donate {
+            background-color: #FF5722;
+            color: white;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .features {
+            padding: 4rem 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            margin: 1rem 0;
+            color: #4CAF50;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                margin-top: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar">
+        <a href="#" class="logo">NoWaste</a>
+        <div class="nav-links">
+            <a href="#" class="btn btn-login">Login</a>
+            <a href="#" class="btn btn-signup">Sign Up</a>
+            <a href="#" class="btn btn-donate">Donate</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Fight Food Waste, Feed Communities</h1>
+        <p>NoWaste connects surplus food from businesses and individuals with people who need it most, reducing waste and hunger in your community.</p>
+        <a href="#" class="cta-btn">Join the Movement</a>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Reduce Waste</h3>
+            <p>Help businesses and individuals redirect surplus food instead of throwing it away.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Feed People</h3>
+            <p>Connect nutritious food with community organizations and people in need.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Save Money</h3>
+            <p>Businesses reduce disposal costs while receiving tax benefits for donations.</p>
+        </div>
+    </section>
+
+    <!-- Add this to your index.html before the footer -->
+<!-- <section class="in-need-section">
+    <div class="donate-container">
+        <h2>Food Available For Those In Need</h2>
+        <div class="food-cards" id="foodCardsContainer"> -->
+            <!-- Food cards will be inserted here by JavaScript -->
+        <!-- </div>
+    </div>
+</section> -->
+<script>// Display food donations on the home page
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('foodCardsContainer');
+    const foodItems = JSON.parse(localStorage.getItem('foodItems')) || [];
     
+    if (foodItems.length === 0) {
+        container.innerHTML = '<p>No food donations available at the moment. Check back later or consider donating!</p>';
+        return;
+    }
+    
+    foodItems.forEach(item => {
+        container.innerHTML += `
+            <div class="food-card" data-id="${item.id}">
+                <img src="${item.image}" alt="${item.type}">
+                <div class="food-card-content">
+                    <h3>${item.type}</h3>
+                    <p>${item.description}</p>
+                    <p class="quantity">Quantity: ${item.quantity}</p>
+                    <p class="expiry">Use by: ${new Date(item.useBy).toLocaleDateString()}</p>
+                    <p class="address">${item.address}</p>
+                    <button class="btn btn-donate" style="width:100%;margin-top:1rem;">
+                        I Can Pick This Up
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+});</script>
+
+    <footer>
+        <p>&copy; 2023 NoWaste. All rights reserved.</p>
+    </footer>
 </body>
 </html>

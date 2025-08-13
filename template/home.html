@@ -298,23 +298,33 @@
         }
     }
 
-    async function claimFood(foodId) {
-        if (!confirm('Are you sure you want to claim this food?')) return;
+async function claimFood(foodId) {
+    // Get the card and its address
+    const foodCard = document.querySelector(`.food-card[data-id="${foodId}"]`);
+    const address = foodCard.querySelector('.address').innerText; // Donor address
 
-        try {
-            const response = await fetch(`http://localhost:5000/api/foodPosted/claim/${foodId}`, { method: 'POST' });
-            if (response.ok) {
-                alert('Food claimed successfully!');
-                fetchDonations();
-            } else {
-                const resData = await response.json();
-                alert('Error: ' + (resData.message || 'Failed to claim food.'));
-            }
-        } catch (error) {
-            alert('Error connecting to server.');
-            console.error(error);
+    if (!confirm(`Are you sure you want to claim this food?\nLocation: ${address}`)) return;
+
+    try {
+        // Send claim request to backend
+        const response = await fetch(`http://localhost:5000/api/foodPosted/claim/${foodId}`, { method: 'POST' });
+
+        if (response.ok) {
+            alert('Food claimed successfully!');
+            fetchDonations(); // Refresh food cards
+
+            // Open Google Maps in a new tab
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+            window.open(mapsUrl, '_blank');
+        } else {
+            const resData = await response.json();
+            alert('Error: ' + (resData.message || 'Failed to claim food.'));
         }
+    } catch (error) {
+        alert('Error connecting to server.');
+        console.error(error);
     }
+}
 
     document.addEventListener('DOMContentLoaded', fetchDonations);
 </script>
